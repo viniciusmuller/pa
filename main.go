@@ -1,7 +1,12 @@
 package main
 
-import "fmt"
+import "github.com/viniciusmuller/pa/cmd"
+
+type Alias struct {
+	Name            string
+	OriginalCommand string
+}
 
 func main() {
-	fmt.Println("hello, world!")
+	cmd.Execute()
 }
