@@ -2,14 +2,11 @@ package cmd
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
-	"path"
 
-	"github.com/adrg/xdg"
 	"github.com/spf13/cobra"
 )
 
@@ -42,29 +39,14 @@ var versionCmd = &cobra.Command{
 	Short: "Creates an alias",
 	Long:  "Aliases are project-specific and are designed for saving you keystrokes",
 	Run: func(cmd *cobra.Command, args []string) {
-		var dataDirectory = path.Join(xdg.DataHome, "/pa")
-		if _, err := os.Stat(dataDirectory); errors.Is(err, os.ErrNotExist) {
-			err := os.Mkdir(dataDirectory, os.ModePerm)
-			if err != nil {
-				log.Println(err)
-			}
-		}
-
 		currentDir, err := os.Getwd()
 		if err != nil {
 			log.Fatalf("error getting current directory: %s", err)
 		}
 
-		var dataFilePath = path.Join(dataDirectory, "data.json")
-		content, err := ioutil.ReadFile(dataFilePath)
+		data, err := readDataFile()
 		if err != nil {
-			log.Fatalf("error opening data file: %s", err)
-		}
-
-		var data PaData
-		err = json.Unmarshal(content, &data)
-		if err != nil {
-			log.Fatalf("error parsing data file: %s", err)
+			log.Fatalf("could not read data file: %s", err)
 		}
 
 		project, ok := data.Projects[currentDir]
